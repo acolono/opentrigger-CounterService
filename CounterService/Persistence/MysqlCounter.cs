@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using CounterService.Models;
@@ -42,13 +43,13 @@ namespace CounterService.Persistence
         /// <returns>Counter</returns>
         public tCounter Get(Guid guid)
         {
+            List<tCounter> c;
             using (var db = new MySqlConnection(_connectionString))
             {
                 db.Open();
-                var c = db.Query<tCounter>("select * from counter where guid=@guid", new { guid }).ToList();
-                if (!c.Any()) throw new Exception("Counter does not exist, use Set to initialize");
-                return c.First();
+                c = db.Query<tCounter>("select * from counter where guid=@guid", new { guid }).ToList();
             }
+            return !c.Any() ? Set(guid) : c.First();
         }
 
         /// <summary>
@@ -59,15 +60,16 @@ namespace CounterService.Persistence
         /// <returns>Counter</returns>
         public tCounter Increment(Guid guid, long by = 1)
         {
+            List<tCounter> c;
+            const string sql = "update counter set value=value+@by where guid=@guid;" +
+                               "select * from counter where guid=@guid";
+
             using (var db = new MySqlConnection(_connectionString))
             {
                 db.Open();
-                const string sql = "update counter set value=value+@by where guid=@guid;" +
-                                   "select * from counter where guid=@guid";
-                var c = db.Query<tCounter>(sql, new { guid, by }).ToList();
-                if (!c.Any()) throw new Exception("Counter does not exist, use Set to initialize");
-                return c.Single();
+                c = db.Query<tCounter>(sql, new { guid, by }).ToList();
             }
+            return !c.Any() ? Set(guid, @by) : c.Single();
         }
 
         /// <summary>

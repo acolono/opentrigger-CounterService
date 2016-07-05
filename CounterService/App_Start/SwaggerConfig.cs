@@ -1,3 +1,4 @@
+#if DEBUG
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web.Http;
@@ -5,9 +6,9 @@ using WebActivatorEx;
 using CounterService;
 using Swashbuckle.Application;
 
-#if DEBUG
+
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
-#endif
+
 
 namespace CounterService
 {
@@ -235,3 +236,4 @@ namespace CounterService
         }
     }
 }
+#endif

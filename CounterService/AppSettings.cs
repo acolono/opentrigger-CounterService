@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using CounterService.Persistence;
 
 namespace CounterService
 {
@@ -10,9 +11,6 @@ namespace CounterService
             return Environment.GetEnvironmentVariable(key) ?? ConfigurationManager.AppSettings[key] ?? defaultValue;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static string ConnectionString
         {
             get
@@ -21,6 +19,14 @@ namespace CounterService
                 if (string.IsNullOrWhiteSpace(connStr)) throw new InvalidOperationException("'ConnectionString' is not set");
                 return connStr;
             }
+        }
+
+        public static ICounter Persistence { get; private set; }
+
+        public static void SetupPersitence()
+        {
+            // if there are multiple persistence implemetations, make them configurable here.
+            Persistence = new MysqlCounter(ConnectionString);
         }
     }
 }

@@ -1,0 +1,22 @@
+# Web node
+ot_cnt_web:
+  hostname: ot_cnt_web
+  build: .
+  restart: always
+  ports:
+    - "80"
+    - "443"
+  environment:
+    - VIRTUAL_HOST=counterservice.opentrigger.com
+    - ConnectionString=Server=ot_cnt_db;Database=counter;User ID=root;Password=1234;
+  links:
+    - ot_cnt_db
+
+ot_cnt_db:
+  hostname: ot_cnt_db
+  image: mariadb
+  ports:
+    - "3306"
+  # DB configuration
+  environment:
+    - MYSQL_ROOT_PASSWORD=1234

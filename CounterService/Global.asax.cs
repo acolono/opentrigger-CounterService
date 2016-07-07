@@ -13,7 +13,17 @@ namespace CounterService
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            AppSettings.SetupPersitence();
+        }
+
+        /// <summary>
+        /// Global Error Handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Application_Error(object sender, System.EventArgs e)
+        {
+            var exception = Server.GetLastError();
+            System.Console.WriteLine(exception.ToString());
         }
     }
 }

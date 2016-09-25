@@ -1,37 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
 using CounterService.Models;
-using Dapper;
 using MySql.Data.MySqlClient;
 
-namespace CounterService.Persistence
+namespace CounterService.Persistence.MySql
 {
     /// <summary>
     /// Mysql Implementation
     /// </summary>
-    public class MysqlCounter : ICounter
+    public class MysqlNativeCounter : ICounter
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="connectionString"></param>
-        public MysqlCounter(string connectionString)
+        public MysqlNativeCounter(string connectionString)
         {
             _connectionString = connectionString;
             using (var db = new MySqlConnection(_connectionString))
             {
                 db.Open();
-                db.Execute(@"
-                    CREATE TABLE IF NOT EXISTS `counter` (
-                    `guid` CHAR(36) NOT NULL,
-                    `value` BIGINT(20) NOT NULL,
-                    `ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    UNIQUE INDEX `idx` (`guid`)
-                    )
-                    ENGINE=InnoDB
-                ");
+                using (var cmd = new MySqlCommand(MysqlInit.Sql, db))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
         private readonly string _connectionString;
@@ -43,14 +34,20 @@ namespace CounterService.Persistence
         /// <returns>Counter</returns>
         public tCounter Get(Guid guid)
         {
-            List<tCounter> c;
+            tCounter c;
             using (var db = new MySqlConnection(_connectionString))
             {
                 db.Open();
-                c = db.Query<tCounter>("select * from counter where guid=@guid", new { guid }).ToList();
+                using (var cmd = new MySqlCommand("select * from counter where guid=@guid", db))
+                {
+                    cmd.Parameters.AddWithValue("@guid", guid);
+                    c = cmd.MaterializeCounter();
+                }
+                
             }
-            return !c.Any() ? Set(guid) : c.First();
+            return c ?? Set(guid);
         }
+
 
         /// <summary>
         /// Increment the counter
@@ -60,16 +57,22 @@ namespace CounterService.Persistence
         /// <returns>Counter</returns>
         public tCounter Increment(Guid guid, long by = 1)
         {
-            List<tCounter> c;
+            tCounter c;
             const string sql = "update counter set value=value+@by where guid=@guid;" +
                                "select * from counter where guid=@guid";
 
             using (var db = new MySqlConnection(_connectionString))
             {
                 db.Open();
-                c = db.Query<tCounter>(sql, new { guid, by }).ToList();
+                using (var cmd = new MySqlCommand(sql, db))
+                {
+                    cmd.Parameters.AddWithValue("@guid", guid);
+                    cmd.Parameters.AddWithValue("@by", by);
+                    c = cmd.MaterializeCounter();
+                }
+
             }
-            return !c.Any() ? Set(guid, @by) : c.Single();
+            return c ?? Set(guid, by);
         }
 
         /// <summary>
@@ -86,7 +89,12 @@ namespace CounterService.Persistence
                 const string sql = "replace into counter (guid,value) values (@guid,@value);" +
                                    "select * from counter where guid=@guid;";
 
-                return db.Query<tCounter>(sql, new { guid, value }).Single();
+                using (var cmd = new MySqlCommand(sql, db))
+                {
+                    cmd.Parameters.AddWithValue("@guid", guid);
+                    cmd.Parameters.AddWithValue("@value", value);
+                    return cmd.MaterializeCounter();
+                }
             }
         }
     }

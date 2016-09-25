@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using CounterService.Persistence;
+using CounterService.Persistence.MySql;
 
 namespace CounterService
 {
@@ -22,6 +23,6 @@ namespace CounterService
         }
 
         private static ICounter _persistence;
-        public static ICounter Persistence => _persistence ?? (_persistence = new MysqlCounter(ConnectionString)); // if there are multiple persistence implemetations, make them configurable here.
+        public static ICounter Persistence => _persistence ?? (_persistence = new MysqlNativeCounter(ConnectionString)); // if there are multiple persistence implemetations, make them configurable here.
     }
 }

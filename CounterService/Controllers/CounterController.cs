@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
 using System.Web.Http;
 using CounterService.Models;
-using Dapper;
-using MySql.Data.MySqlClient;
 
 namespace CounterService.Controllers
 {
@@ -28,7 +24,7 @@ namespace CounterService.Controllers
         /// <param name="guid"></param>
         /// <param name="by"></param>
         /// <returns>Counter</returns>
-        [HttpPost]
+        [HttpPatch, HttpGet]
         public tCounter Increment(Guid guid, long by = 1)
         {
             return AppSettings.Persistence.Increment(guid, by);
@@ -40,7 +36,7 @@ namespace CounterService.Controllers
         /// <param name="guid">guid or empty (00000000-0000-0000-0000-000000000000)</param>
         /// <param name="value">value</param>
         /// <returns>64bit number</returns>
-        [HttpPost]
+        [HttpPost, HttpGet]
         public tCounter Set(Guid? guid = null, long value = 0)
         {
             if (!guid.HasValue || guid.Value == Guid.Empty) guid = Guid.NewGuid();

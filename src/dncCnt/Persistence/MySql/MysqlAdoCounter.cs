@@ -44,7 +44,7 @@ namespace dncCnt.Persistence.MySql
                 await db.OpenAsync();
                 using (var cmd = new MySqlCommand("select * from counter where guid=@guid", db))
                 {
-                    cmd.Parameters.Add("@guid", DbType.Guid, guid);
+                    cmd.Parameters.Add("@guid", DbType.Binary, guid.ToByteArray());
                     c = (await cmd.MaterializeCounterAync()).FirstOrDefault();
                 }
                 
@@ -70,7 +70,7 @@ namespace dncCnt.Persistence.MySql
                 await db.OpenAsync();
                 using (var cmd = new MySqlCommand(sql, db))
                 {
-                    cmd.Parameters.Add("@guid", DbType.Guid, guid);
+                    cmd.Parameters.Add("@guid", DbType.Binary, guid.ToByteArray());
                     cmd.Parameters.Add("@by", DbType.Int64, by);
                     c = (await cmd.MaterializeCounterAync()).FirstOrDefault();
                 }
@@ -95,7 +95,7 @@ namespace dncCnt.Persistence.MySql
 
                 using (var cmd = new MySqlCommand(sql, db))
                 {
-                    cmd.Parameters.Add("@guid", DbType.Guid, guid);
+                    cmd.Parameters.Add("@guid", DbType.Binary, guid.ToByteArray());
                     cmd.Parameters.Add("@value", DbType.Int64, value);
                     return (await cmd.MaterializeCounterAync()).Single();
                 }

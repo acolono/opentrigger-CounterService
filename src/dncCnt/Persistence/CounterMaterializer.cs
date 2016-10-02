@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -21,9 +22,9 @@ namespace dncCnt.Persistence
                 {
                     counters.Add(new tCounter
                     {
-                        guid = reader.GetGuid(0),
-                        value = reader.GetInt64(1),
-                        ts = reader.GetDateTime(2),
+                        guid = new Guid(await reader.GetFieldValueAsync<byte[]>(0)),
+                        value = await reader.GetFieldValueAsync<long>(1),
+                        ts = await reader.GetFieldValueAsync<DateTime>(2),
                     });
                 }
             }

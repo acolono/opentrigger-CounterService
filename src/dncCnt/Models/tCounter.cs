@@ -6,6 +6,6 @@ namespace dncCnt.Models
     {
         public Guid guid;
         public long value;
-        public DateTimeOffset ts;
+        public DateTime ts;
     }
 }

@@ -19,10 +19,12 @@
     },
     "dncCnt": {
       "commandName": "Project",
+      "commandLineArgs": "--server.urls=http://0.0.0.0:5000",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000/api/values",
+      "launchUrl": "http://localhost:5000/swagger/ui",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "connectionString": "Server=fserv;Port=4417;Database=counter;User ID=root;Password=1234;Pooling=true",
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
   }

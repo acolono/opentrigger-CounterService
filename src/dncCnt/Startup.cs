@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +38,7 @@ namespace dncCnt
                     p.AllowAnyOrigin();
                 });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +51,7 @@ namespace dncCnt
             app.UseMvcWithDefaultRoute();
             app.UseSwagger();
             app.UseSwaggerUi();
-            
+
         }
     }
 }

@@ -14,12 +14,12 @@ namespace dncCnt.Persistence
             var column = reader.GetOrdinal(name);
             return await reader.GetFieldValueAsync<T>(column);
         }
+        public static T GetFieldValue<T>(this DbDataReader reader, string name)
+        {
+            var column = reader.GetOrdinal(name);
+            return reader.GetFieldValue<T>(column);
+        }
 
-        /// <summary>
-        /// Read tCounter
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <returns></returns>
         public static async Task<List<tCounter>> MaterializeCounterAync<T>(this T cmd) where T:DbCommand
         {
             var counters = new List<tCounter>();
@@ -37,5 +37,24 @@ namespace dncCnt.Persistence
             }
             return counters;
         }
+
+        public static List<tCounter> MaterializeCounter<T>(this T cmd) where T : DbCommand
+        {
+            var counters = new List<tCounter>();
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    counters.Add(new tCounter
+                    {
+                        guid = new Guid(reader.GetFieldValue<byte[]>("guid")),
+                        value = reader.GetFieldValue<long>("value"),
+                        ts = reader.GetFieldValue<DateTime>("ts"),
+                    });
+                }
+            }
+            return counters;
+        }
+
     }
 }

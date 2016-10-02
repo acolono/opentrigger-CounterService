@@ -10,13 +10,13 @@ namespace dncCnt.Persistence.MySql
     /// <summary>
     /// Mysql Implementation
     /// </summary>
-    public class MysqlAdoCounter
+    public class MysqlAsyncAdoCounter
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="connectionString"></param>
-        public MysqlAdoCounter(string connectionString = null)
+        public MysqlAsyncAdoCounter(string connectionString = null)
         {
             if (string.IsNullOrWhiteSpace(connectionString)) connectionString = Environment.GetEnvironmentVariable("connectionString");
             _connectionString = connectionString;
@@ -36,20 +36,20 @@ namespace dncCnt.Persistence.MySql
         /// </summary>
         /// <param name="guid">guid</param>
         /// <returns>Counter</returns>
-        public tCounter Get(Guid guid)
+        public async Task<tCounter> Get(Guid guid)
         {
             tCounter c;
             using (var db = new MySqlConnection(_connectionString))
             {
-                db.Open();
+                await db.OpenAsync();
                 using (var cmd = new MySqlCommand("select * from counter where guid=@guid", db))
                 {
                     cmd.Parameters.Add("@guid", DbType.Binary, guid.ToByteArray());
-                    c = cmd.MaterializeCounter().FirstOrDefault();
+                    c = (await cmd.MaterializeCounterAync()).FirstOrDefault();
                 }
                 
             }
-            return c ?? Set(guid);
+            return c ?? await Set(guid);
         }
 
 
@@ -59,7 +59,7 @@ namespace dncCnt.Persistence.MySql
         /// <param name="guid"></param>
         /// <param name="by"></param>
         /// <returns>Counter</returns>
-        public tCounter Increment(Guid guid, long by = 1)
+        public async Task<tCounter> Increment(Guid guid, long by = 1)
         {
             tCounter c;
             const string sql = "update counter set value=value+@by where guid=@guid;" +
@@ -67,16 +67,16 @@ namespace dncCnt.Persistence.MySql
 
             using (var db = new MySqlConnection(_connectionString))
             {
-                db.Open();
+                await db.OpenAsync();
                 using (var cmd = new MySqlCommand(sql, db))
                 {
                     cmd.Parameters.Add("@guid", DbType.Binary, guid.ToByteArray());
                     cmd.Parameters.Add("@by", DbType.Int64, by);
-                    c = cmd.MaterializeCounter().FirstOrDefault();
+                    c = (await cmd.MaterializeCounterAync()).FirstOrDefault();
                 }
 
             }
-            return c ?? Set(guid, by);
+            return c ?? await Set(guid, by);
         }
 
         /// <summary>
@@ -85,11 +85,11 @@ namespace dncCnt.Persistence.MySql
         /// <param name="guid">guid</param>
         /// <param name="value">value</param>
         /// <returns>64bit number</returns>
-        public tCounter Set(Guid guid, long value = 0)
+        public async Task<tCounter> Set(Guid guid, long value = 0)
         {
             using (var db = new MySqlConnection(_connectionString))
             {
-                db.Open();
+                await db.OpenAsync();
                 const string sql = "replace into counter (guid,value) values (@guid,@value);" +
                                    "select * from counter where guid=@guid;";
 
@@ -97,7 +97,7 @@ namespace dncCnt.Persistence.MySql
                 {
                     cmd.Parameters.Add("@guid", DbType.Binary, guid.ToByteArray());
                     cmd.Parameters.Add("@value", DbType.Int64, value);
-                    return cmd.MaterializeCounter().Single();
+                    return (await cmd.MaterializeCounterAync()).Single();
                 }
             }
         }

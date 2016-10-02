@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace dncCnt.Controllers
 {
-    public class CounterController : Controller
+    public class CounterAsyncController : Controller
     {
-        private readonly MysqlAdoCounter _db;
+        private readonly MysqlAsyncAdoCounter _db;
 
-        public CounterController()
+        public CounterAsyncController()
         {
-            _db = new MysqlAdoCounter();
+            _db = new MysqlAsyncAdoCounter();
         }
 
         /// <summary>
@@ -20,11 +20,11 @@ namespace dncCnt.Controllers
         /// </summary>
         /// <param name="guid">guid</param>
         /// <returns>Counter</returns>
-        [Route("Counter/Get/{guid}")]
+        [Route("Counter/GetAsync/{guid}")]
         [HttpGet]
-        public tCounter Get([FromRoute]Guid guid)
+        public async Task<tCounter> Get([FromRoute]Guid guid)
         {
-            return _db.Get(guid.NewIfEmpty());
+            return await _db.Get(guid.NewIfEmpty());
         }
 
         /// <summary>
@@ -34,10 +34,10 @@ namespace dncCnt.Controllers
         /// <param name="by"></param>
         /// <returns>Counter</returns>
         [HttpGet, HttpPatch]
-        [Route("Counter/Increment/{guid}")]
-        public tCounter Increment([FromRoute]Guid guid, [FromQuery]long by = 1)
+        [Route("Counter/IncrementAsync/{guid}")]
+        public async Task<tCounter> Increment([FromRoute]Guid guid, [FromQuery]long by = 1)
         {
-            return _db.Increment(guid.NewIfEmpty(), by);
+            return await _db.Increment(guid.NewIfEmpty(), by);
         }
 
         /// <summary>
@@ -47,10 +47,10 @@ namespace dncCnt.Controllers
         /// <param name="value">value</param>
         /// <returns>64bit number</returns>
         [HttpGet, HttpPost]
-        [Route("Counter/Set/{guid}")]
-        public tCounter Set([FromRoute]Guid guid, [FromQuery]long value = 0)
+        [Route("Counter/SetAsync/{guid}")]
+        public async Task<tCounter> Set([FromRoute]Guid guid, [FromQuery]long value = 0)
         {
-            return _db.Set(guid.NewIfEmpty(), value);
+            return await _db.Set(guid.NewIfEmpty(), value);
         }
     }
 }

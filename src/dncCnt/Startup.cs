@@ -38,6 +38,10 @@ namespace dncCnt
                     p.AllowAnyOrigin();
                 });
             });
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(JsonExceptionFilter));
+            });
 
         }
 
@@ -46,11 +50,12 @@ namespace dncCnt
         {
             //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             //loggerFactory.AddDebug();
-            //app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
             app.UseCors("Default");
             app.UseMvcWithDefaultRoute();
             app.UseSwagger();
             app.UseSwaggerUi();
+            app.UseStatusCodePages();
 
         }
     }

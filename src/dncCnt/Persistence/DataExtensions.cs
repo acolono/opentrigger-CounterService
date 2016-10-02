@@ -6,8 +6,15 @@ using dncCnt.Models;
 
 namespace dncCnt.Persistence
 {
-    public static class CounterMaterializer 
+    public static class DataExtensions 
     {
+
+        public static async Task<T> GetFieldValueAsync<T>(this DbDataReader reader, string name)
+        {
+            var column = reader.GetOrdinal(name);
+            return await reader.GetFieldValueAsync<T>(column);
+        }
+
         /// <summary>
         /// Read tCounter
         /// </summary>
@@ -22,9 +29,9 @@ namespace dncCnt.Persistence
                 {
                     counters.Add(new tCounter
                     {
-                        guid = new Guid(await reader.GetFieldValueAsync<byte[]>(0)),
-                        value = await reader.GetFieldValueAsync<long>(1),
-                        ts = await reader.GetFieldValueAsync<DateTime>(2),
+                        guid = new Guid(await reader.GetFieldValueAsync<byte[]>("guid")),
+                        value = await reader.GetFieldValueAsync<long>("value"),
+                        ts = await reader.GetFieldValueAsync<DateTime>("ts"),
                     });
                 }
             }

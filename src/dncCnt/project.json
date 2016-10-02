@@ -15,10 +15,10 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "MySqlConnector": "0.1.0-alpha25",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Swashbuckle": "6.0.0-beta902",
-    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0"
+    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0",
+    "MySql.Data": "7.0.5-IR21"
   },
 
   "tools": {

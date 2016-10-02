@@ -1,0 +1,10 @@
+version: 0.0.{build}
+before_build:
+- cmd: dotnet restore src/dncCnt/
+build:
+  verbosity: minimal
+before_package:
+- cmd: dotnet publish -c Release src/dncCnt/
+artifacts:
+- path: ./src/dncCnt/bin/Release/netcoreapp1.0/publish/
+  name: default

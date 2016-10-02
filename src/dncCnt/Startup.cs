@@ -29,15 +29,27 @@ namespace dncCnt
         {
             // Add framework services.
             services.AddMvc();
+            services.AddSwaggerGen();
+            services.AddCors(o =>
+            {
+                o.AddPolicy("Default", p =>
+                {
+                    p.AllowAnyOrigin();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            app.UseMvc();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
+            //app.UseDeveloperExceptionPage();
+            app.UseCors("Default");
+            app.UseMvcWithDefaultRoute();
+            app.UseSwagger();
+            app.UseSwaggerUi();
+            
         }
     }
 }

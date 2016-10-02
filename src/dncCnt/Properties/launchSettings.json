@@ -11,8 +11,9 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "swagger/ui",
       "environmentVariables": {
+        "connectionString": "Server=fserv;Port=4417;Database=counter;User ID=root;Password=1234;Pooling=true",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

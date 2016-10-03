@@ -27,6 +27,7 @@ namespace dncCnt.Persistence.MySql
             if (_finalConnectionString != null) return _finalConnectionString;
             lock (Sync)
             {
+                if (_finalConnectionString != null) return _finalConnectionString;
                 if (string.IsNullOrWhiteSpace(connectionString)) connectionString = Environment.GetEnvironmentVariable("connectionString");
                 var cb = new MySqlConnectionStringBuilder(connectionString);
                 var database = cb.Database;

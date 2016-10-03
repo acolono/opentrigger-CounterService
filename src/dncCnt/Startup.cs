@@ -5,9 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.Swagger.Model;
+using Swashbuckle.SwaggerGen.Generator;
 
 namespace dncCnt
 {
@@ -30,7 +33,10 @@ namespace dncCnt
         {
             // Add framework services.
             services.AddMvc();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(setup =>
+            {
+                setup.DocumentFilter<SwaggerFilter>();
+            });
             services.AddCors(o =>
             {
                 o.AddPolicy("Default", p =>
@@ -56,7 +62,17 @@ namespace dncCnt
             app.UseSwagger();
             app.UseSwaggerUi();
             app.UseStatusCodePages();
+        }
+    }
 
+    internal class SwaggerFilter : IDocumentFilter
+    {
+        public void Apply(Swashbuckle.Swagger.Model.SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        {
+            foreach (var path in swaggerDoc.Paths)
+            {
+                if (path.Value.Patch != null || path.Value.Post != null) path.Value.Get = null;
+            }
         }
     }
 }

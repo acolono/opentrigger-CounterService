@@ -31,6 +31,7 @@ namespace dncCnt.Persistence.MySql
                 if (string.IsNullOrWhiteSpace(connectionString)) connectionString = Environment.GetEnvironmentVariable("connectionString");
                 var cb = new MySqlConnectionStringBuilder(connectionString);
                 var database = cb.Database;
+                if (string.IsNullOrWhiteSpace(database)) database = "counter";
                 cb.Database = null;
                 var noDbConnectionString = cb.GetConnectionString(true);
 

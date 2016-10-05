@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace dncCnt.Persistence.MySql
 {
-    public static class MysqlInit
+    public static class MySqlInit
     {
         /// <summary>
         /// mysql init script
@@ -31,13 +31,12 @@ namespace dncCnt.Persistence.MySql
                 if (string.IsNullOrWhiteSpace(connectionString)) connectionString = Environment.GetEnvironmentVariable("connectionString");
                 var cb = new MySqlConnectionStringBuilder(connectionString);
                 var database = cb.Database;
-                if (string.IsNullOrWhiteSpace(database)) database = "counter";
                 cb.Database = null;
                 var noDbConnectionString = cb.GetConnectionString(true);
 
                 if (!Regex.IsMatch(database, "[0-9A-Z]+", RegexOptions.IgnoreCase))
                 {
-                    throw new ArgumentOutOfRangeException($"invalid database name: {database}");
+                    throw new ArgumentOutOfRangeException($"invalid database name: {database ?? "<null>"}");
                 }
 
                 using (var db = new MySqlConnection(noDbConnectionString))

@@ -18,7 +18,7 @@ namespace dncCnt.Persistence.MySql
         /// <param name="connectionString"></param>
         public MysqlAsyncAdoCounter(string connectionString = null)
         {
-            _connectionString = MysqlInit.SetupDatabase(connectionString);
+            _connectionString = MySqlInit.SetupDatabase(connectionString);
         }
         private readonly string _connectionString;
 
